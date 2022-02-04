@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+	
+	<spring:beans>
+		<spring:bean class="com.acme_travel.configuration.SpringConfiguration"></spring:bean>
+	</spring:beans>
+	<http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8081" basePath="/api/acme_travel" doc:name="HTTP Listener Configuration"/>
+	<jdbc:mysql-data-source name="MySQL_Data_Source" user="tamarad123" password="#damjanovic1" url="jdbc:mysql://rds-mysql-assessment.ckld9drpn0yb.eu-west-1.rds.amazonaws.com:3306/airlines_sandbox" transactionIsolation="UNSPECIFIED" doc:name="MySQL Data Source"/>
+	<flow name="spirng_rest_muleFlow">
+		<http:listener config-ref="HTTP_Listener_Configuration" path="/flights" allowedMethods="GET" doc:name="HttpGetAllFligtsListener"/>
+		<invoke name="AllFlights" object-ref="flightService" method="findAll"  doc:name="InvokeAllFlights"/>
+		<json:object-to-json-transformer doc:name="Object to JSON"/>
+		<logger message="All flights are retrieved" level="INFO" doc:name="AllFlightsLogger"/>
+	</flow>
+</mule>
